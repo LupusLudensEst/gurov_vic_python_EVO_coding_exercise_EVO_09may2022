@@ -1,4 +1,4 @@
-# Python version of coding exercise    
+# Python version of coding exercise
 # ---------------------------------
 import requests
 import pytest
@@ -19,7 +19,7 @@ class CreditCardTransaction:
 
     # TODO: 1. Fill in missing getter and setter code.
     def set_amount(self, amount):
-        n = round(float(amount), 2) # "{:.2f}".format(amount)
+        n = "{:.2f}".format(amount) # round(float(amount), 2)
         if not (float(n) > 0.00) or not (float(n) < 1000.00):
             #self._status = 'rejected'
             #self._processed_amount = None
@@ -42,8 +42,8 @@ class CreditCardTransaction:
                 raise ValueError("Card number is not 16 digits.")
         elif isinstance(credit_card_number, str):
             if not (len(credit_card_number) == 16 and credit_card_number.isdigit()):
-                #self._status = 'rejected'
-                #self._processed_amount = None
+                self._status = 'rejected'
+                self._processed_amount = None
                 raise ValueError("Card number is not 16 digits and has wrong characters")
         else:
             self._status = 'rejected'
@@ -87,15 +87,36 @@ class CreditCardTransaction:
         # set _processed_value
         self._processed_amount = self._amount
 
-
 def test_send_credit_card_transaction():
     # TODO: 4. Create a credit card transaction instance, set the amount and credit card number, and send it.
     transaction_amount = 789.02
     from random import randint
-    s = ''
+    nmbr = ''
     for i in range(16):
-        s = s + str(randint(0, 9))
-    credit_card_number = int(s)
+        nmbr += str(randint(0, 9))
+    print(f'\nCard generated:\t{nmbr}\nCard reversed:\t{nmbr[::-1]}\n')
+    credit_card_number = nmbr[::-1]
+    s1 = 0
+    for index, value in enumerate(credit_card_number):
+        if index % 2 != 0:
+            x = int(value) * 2
+            if x > 9:
+                s1 += (x % 10) + (x // 10)
+            else:
+                s1 += x
+            print(x, ':', index, end='|')
+    print(f'Sum1: {s1}')
+    print('\n')
+    s2 = 0
+    for index, value in enumerate(credit_card_number):
+        if index % 2 == 0:
+            s2 += int(value)
+            print(int(value), ':', index, end='|')
+    print(f'Sum2: {s2}')
+    res = (s1 + s2)
+    print(f'\nRes: {res}\n')
+    expected_crd_nmbr_nd = 0
+    actual_crd_nmbr_nd = res % 10
     expected_status = "processed"
     rejected_status = "rejected"
 
@@ -115,14 +136,13 @@ def test_send_credit_card_transaction():
     assert isinstance(actual_status, str), f'Unexpected type of _status: "{type(actual_status)}", expected: "str".'
     assert rejected_status != actual_status, f'send_transaction() failed: credit card transaction rejected.'
     assert expected_status == actual_status, f'Unexpected value of _status: "{actual_status}", expected: "{expected_status}".'
-
     assert actual_processed_amount is not None, f'send_transaction() failed to set _processed_amount.'
     assert isinstance(actual_processed_amount, float), \
         f'Unexpected type of _processed_amount: "{type(actual_processed_amount)}", expected: "float".'
     assert transaction_amount == actual_processed_amount, \
         f'Unexpected value of _processed_amount: "{actual_processed_amount}", expected: "{transaction_amount}".'
+    assert actual_crd_nmbr_nd == expected_crd_nmbr_nd,  f'Card number is not valid, expected card ends on "{expected_crd_nmbr_nd}" but it ends on "{actual_crd_nmbr_nd}"'
 
 
 if __name__ == '__main__':
     test_send_credit_card_transaction()
-
