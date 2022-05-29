@@ -63,9 +63,9 @@ class CreditCardTransaction:
 
         # dummy method for testing
         # set _status
-        #self._status = "processed"
+        self._status = "processed"
         # set _processed_value
-        #self._processed_amount = 100.05
+        self._processed_amount = 100.05
 
 
 def test_send_credit_card_transaction():
